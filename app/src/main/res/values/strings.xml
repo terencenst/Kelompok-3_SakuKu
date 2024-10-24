@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">IF570_LAB_UTS_Nicholas Terence Siahaan_00000075128</string>
+    <string name="post_hint">Tulis Cerita Anda</string>
+    <string name="post_image_description">Post Image</string>
+    <string name="select_image">Pilih Gambar</string>
+    <string name="post_story">Post Cerita</string>
+    <string name="home">Home</string>
+    <string name="post">Post</string>
+    <string name="profile">Profile</string>
+    <string name="email_hint">Type your Email</string>
+    <string name="password_hint">Type Your Password</string>
+    <string name="confirm_password_hint">Retype Your Password</string>
+    <string name="sign_up_button">Sign Up</string>
+    <string name="already_registered">Already Registered, Sign In!</string>
+    <string name="like">Like</string>
+    <string name="pin">Pin</string>
+</resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "85618959133",
+    "project_id": "kelompok-3-sakuku",
+    "storage_bucket": "kelompok-3-sakuku.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85618959133:android:23881e094bfcf7f73b77f4",
+        "android_client_info": {
+          "package_name": "com.example.kelompok3_sakuku"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAunw4Yn22lyEklzcsbIR-z90eFh_gI0UM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
