@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.kelompok3_sakuku.R
 import com.example.kelompok3_sakuku.SetBalanceActivity
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class WalletFragment : Fragment() {
@@ -30,17 +31,14 @@ class WalletFragment : Fragment() {
         btnAdd = view.findViewById(R.id.btnAdd)
         btnSubtract = view.findViewById(R.id.btnSubtract)
 
-        // Memuat saldo dari Firestore
         loadBalance()
 
-        // Aksi ketika tombol tambah ditekan
         btnAdd.setOnClickListener {
             val intent = Intent(requireActivity(), SetBalanceActivity::class.java)
             intent.putExtra("operation", "add")
             startActivityForResult(intent, REQUEST_CODE_SET_BALANCE)
         }
 
-        // Aksi ketika tombol kurangi ditekan
         btnSubtract.setOnClickListener {
             val intent = Intent(requireActivity(), SetBalanceActivity::class.java)
             intent.putExtra("operation", "subtract")
@@ -51,14 +49,13 @@ class WalletFragment : Fragment() {
     }
 
     private fun loadBalance() {
-        db.collection("Balance").document("userBalance") // Ganti dengan ID dokumen yang sesuai
+        db.collection("Balance").document("userBalance")
             .get()
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     val balance = document.getLong("amount") ?: 0
                     txtBalance.text = "Saldo: Rp $balance"
                 } else {
-                    // Jika dokumen tidak ada, buat dokumen dengan saldo awal
                     val initialBalanceData = hashMapOf("amount" to 0L)
                     db.collection("Balance").document("userBalance").set(initialBalanceData)
                         .addOnSuccessListener {
@@ -79,6 +76,38 @@ class WalletFragment : Fragment() {
         if (requestCode == REQUEST_CODE_SET_BALANCE && resultCode == AppCompatActivity.RESULT_OK) {
             loadBalance() // Reload saldo setelah menambah atau mengurangi
         }
+    }
+
+    private fun addTransaction(type: String, amount: Long) {
+        val transaction = hashMapOf(
+            "type" to type,
+            "amount" to amount,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        db.collection("Transactions").add(transaction)
+            .addOnSuccessListener {
+                // Transaksi berhasil ditambahkan
+            }
+            .addOnFailureListener { e ->
+                // Gagal menambahkan transaksi
+            }
+    }
+
+    private fun updateBalance(amount: Long) {
+        db.collection("Balance").document("userBalance")
+            .update("amount", FieldValue.increment(amount))
+            .addOnSuccessListener {
+                if (amount > 0) {
+                    addTransaction("addition", amount) // Mencatat penambahan
+                } else {
+                    addTransaction("subtraction", -amount) // Mencatat pengurangan
+                }
+                loadBalance() // Memuat saldo setelah update
+            }
+            .addOnFailureListener {
+                // Gagal memperbarui saldo
+            }
     }
 
     companion object {

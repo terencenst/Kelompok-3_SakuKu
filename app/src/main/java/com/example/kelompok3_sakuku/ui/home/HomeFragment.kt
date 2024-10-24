@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ListView
@@ -21,6 +22,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var balanceListener: ListenerRegistration
+    private lateinit var transactionListener: ListenerRegistration
 
     private lateinit var txtSaldo: TextView
     private lateinit var lvTransactions: ListView
@@ -75,13 +77,32 @@ class HomeFragment : Fragment() {
                 }
             }
 
-        // Memuat riwayat transaksi jika ada
-        // Jika Anda memiliki koleksi transaksi, Anda dapat memuatnya di sini.
+        // Memuat riwayat transaksi
+        transactionListener = db.collection("Transactions")
+            .addSnapshotListener { querySnapshot, e ->
+                if (e != null) {
+                    Log.w("HomeFragment", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                // Menampilkan transaksi di ListView
+                val transactions = mutableListOf<String>()
+                querySnapshot?.documents?.forEach { document ->
+                    val type = document.getString("type")
+                    val amount = document.getLong("amount") ?: 0
+                    transactions.add("$type: Rp $amount")
+                }
+
+                // Perbarui ListView dengan transaksi
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, transactions)
+                lvTransactions.adapter = adapter
+            }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // Hentikan pendengar saat fragment dihancurkan
         balanceListener.remove()
+        transactionListener.remove()
     }
 }
