@@ -1,4 +1,4 @@
-package com.example.kelompok3_sakuku
+package com.example.kelompok3_sakuku.authentication
 
 import android.content.Intent
 import android.os.Bundle
