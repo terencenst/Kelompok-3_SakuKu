@@ -1,60 +1,87 @@
 package com.example.kelompok3_sakuku.ui.wallet
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.example.kelompok3_sakuku.R
+import com.example.kelompok3_sakuku.SetBalanceActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [WalletFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class WalletFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var txtBalance: TextView
+    private lateinit var btnAdd: Button
+    private lateinit var btnSubtract: Button
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wallet, container, false)
+        val view = inflater.inflate(R.layout.fragment_wallet, container, false)
+
+        txtBalance = view.findViewById(R.id.txtBalance)
+        btnAdd = view.findViewById(R.id.btnAdd)
+        btnSubtract = view.findViewById(R.id.btnSubtract)
+
+        // Memuat saldo dari Firestore
+        loadBalance()
+
+        // Aksi ketika tombol tambah ditekan
+        btnAdd.setOnClickListener {
+            val intent = Intent(requireActivity(), SetBalanceActivity::class.java)
+            intent.putExtra("operation", "add")
+            startActivityForResult(intent, REQUEST_CODE_SET_BALANCE)
+        }
+
+        // Aksi ketika tombol kurangi ditekan
+        btnSubtract.setOnClickListener {
+            val intent = Intent(requireActivity(), SetBalanceActivity::class.java)
+            intent.putExtra("operation", "subtract")
+            startActivityForResult(intent, REQUEST_CODE_SET_BALANCE)
+        }
+
+        return view
+    }
+
+    private fun loadBalance() {
+        db.collection("Balance").document("userBalance") // Ganti dengan ID dokumen yang sesuai
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val balance = document.getLong("amount") ?: 0
+                    txtBalance.text = "Saldo: Rp $balance"
+                } else {
+                    // Jika dokumen tidak ada, buat dokumen dengan saldo awal
+                    val initialBalanceData = hashMapOf("amount" to 0L)
+                    db.collection("Balance").document("userBalance").set(initialBalanceData)
+                        .addOnSuccessListener {
+                            txtBalance.text = "Saldo: Rp 0"
+                        }
+                        .addOnFailureListener {
+                            txtBalance.text = "Gagal menginisialisasi saldo"
+                        }
+                }
+            }
+            .addOnFailureListener {
+                txtBalance.text = "Gagal mengambil saldo"
+            }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_SET_BALANCE && resultCode == AppCompatActivity.RESULT_OK) {
+            loadBalance() // Reload saldo setelah menambah atau mengurangi
+        }
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment WalletFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            WalletFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        private const val REQUEST_CODE_SET_BALANCE = 1
     }
 }

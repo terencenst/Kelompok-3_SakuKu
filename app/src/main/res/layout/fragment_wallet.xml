@@ -3,11 +3,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:padding="16dp"
+    android:background="@android:color/white">
 
+    <!-- Title Bar -->
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wallet"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Informasi Saldo -->
+    <TextView
+        android:id="@+id/txtBalance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Wallet Overview"
-        android:textSize="24sp" />
+        android:text="Saldo: Rp 0"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Button Tambah dan Kurangi -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tambah" />
+
+        <Button
+            android:id="@+id/btnSubtract"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kurangi"
+            android:layout_marginStart="16dp" />
+    </LinearLayout>
+
 </LinearLayout>

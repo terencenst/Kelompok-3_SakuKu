@@ -18,6 +18,9 @@
         android:theme="@style/Theme.Kelompok3_SakuKu"
         tools:targetApi="31">
         <activity
+            android:name=".SetBalanceActivity"
+            android:exported="false" />
+        <activity
             android:name=".SetBudgetActivity"
             android:exported="false" />
         <activity
