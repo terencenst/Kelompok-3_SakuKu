@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/etBudgetName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nama Budget"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:minHeight="56dp"
+        android:background="@drawable/edittext_background"
+        android:paddingBottom="16dp" />
+
+    <EditText
+        android:id="@+id/etBudgetAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Jumlah Uang (Rp)"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:minHeight="56dp"
+        android:background="@drawable/edittext_background"
+        android:paddingBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnSaveBudget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Simpan Budget"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
