@@ -1,24 +1,18 @@
 package com.example.kelompok3_sakuku.ui.profile
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.example.kelompok3_sakuku.R
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -35,19 +29,56 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
+
+        // Menambahkan fungsi klik untuk masing-masing tombol
+        val riwayat = view.findViewById<TextView>(R.id.riwayat)
+        val akunSaya = view.findViewById<TextView>(R.id.akun_saya)
+        val aturPin = view.findViewById<TextView>(R.id.atur_pin)
+        val pengaturanNotifikasi = view.findViewById<TextView>(R.id.pengaturan_notifikasi)
+        val bahasa = view.findViewById<TextView>(R.id.bahasa)
+        val bantuanLaporan = view.findViewById<TextView>(R.id.bantuan_laporan)
+        val pengaturanAkun = view.findViewById<TextView>(R.id.pengaturan_akun)
+
+        riwayat.setOnClickListener {
+            // Aksi ketika Riwayat di klik
+            Toast.makeText(context, "Riwayat di klik", Toast.LENGTH_SHORT).show()
+        }
+
+        akunSaya.setOnClickListener {
+            // Aksi ketika Akun Saya di klik
+            Toast.makeText(context, "Akun Saya di klik", Toast.LENGTH_SHORT).show()
+        }
+
+        aturPin.setOnClickListener {
+            // Aksi ketika Atur PIN di klik
+            Toast.makeText(context, "Atur PIN di klik", Toast.LENGTH_SHORT).show()
+        }
+
+        pengaturanNotifikasi.setOnClickListener {
+            // Aksi ketika Pengaturan Notifikasi di klik
+            Toast.makeText(context, "Pengaturan Notifikasi di klik", Toast.LENGTH_SHORT).show()
+        }
+
+        bahasa.setOnClickListener {
+            // Aksi ketika Bahasa di klik
+            Toast.makeText(context, "Bahasa di klik", Toast.LENGTH_SHORT).show()
+        }
+
+        bantuanLaporan.setOnClickListener {
+            // Aksi ketika Bantuan & Laporan di klik
+            Toast.makeText(context, "Bantuan & Laporan di klik", Toast.LENGTH_SHORT).show()
+        }
+
+        pengaturanAkun.setOnClickListener {
+            // Aksi ketika Pengaturan Akun di klik
+            Toast.makeText(context, "Pengaturan Akun di klik", Toast.LENGTH_SHORT).show()
+        }
+
+        return view
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             ProfileFragment().apply {
