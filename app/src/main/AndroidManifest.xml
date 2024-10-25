@@ -18,13 +18,19 @@
         android:theme="@style/Theme.Kelompok3_SakuKu"
         tools:targetApi="31">
         <activity
+            android:name=".ui.profile.AkunActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.profile.EditProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".SetBalanceActivity"
             android:exported="false" />
         <activity
             android:name=".SetBudgetActivity"
             android:exported="false" />
         <activity
-            android:name=".authentication.SignInActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,7 +45,7 @@
             android:name=".DetailActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".authentication.SignInActivity"
             android:exported="true" />
         <activity
             android:name=".authentication.SignUpActivity"

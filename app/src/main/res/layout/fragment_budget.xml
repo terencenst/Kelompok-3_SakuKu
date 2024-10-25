@@ -68,7 +68,6 @@
                 android:id="@+id/tvBalance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rp 12.000.000"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp" />
@@ -77,22 +76,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="16dp"
-                android:gravity="center_vertical">
-
-                <Button
-                    android:id="@+id/btnSetBudget"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Set Budget"
-                    android:layout_marginEnd="16dp" />
+                android:layout_margin="16dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Budget List"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:gravity="start"/>
+
+                <TextView
+                    android:id="@+id/btnSetBudget"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Set Budget"
+                    android:textColor="#FFC727"
+                    android:textSize="16sp"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:clickable="true"
+                    android:focusable="true"/>
             </LinearLayout>
 
             <!-- List Budget -->
@@ -100,7 +107,8 @@
                 android:id="@+id/budgetList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:layout_margin="16dp"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

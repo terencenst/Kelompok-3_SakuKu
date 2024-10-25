@@ -1,17 +1,22 @@
 package com.example.kelompok3_sakuku
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class SetBalanceActivity : AppCompatActivity() {
 
     private lateinit var etAmount: EditText
     private lateinit var btnSave: Button
+    private lateinit var btnBack: ImageButton // Tambahkan ini
     private val db = FirebaseFirestore.getInstance()
     private var operation: String? = null
 
@@ -21,11 +26,44 @@ class SetBalanceActivity : AppCompatActivity() {
 
         etAmount = findViewById(R.id.etAmount)
         btnSave = findViewById(R.id.btnSave)
+        btnBack = findViewById(R.id.btnBack) // Inisialisasi tombol Back
 
         operation = intent.getStringExtra("operation")
 
+        btnBack.setOnClickListener {
+            finish() // Kembali ke aktivitas sebelumnya
+        }
+
         btnSave.setOnClickListener {
-            updateBalance()
+            if (operation == "subtract") {
+                checkCurrentBalanceAndUpdate()
+            } else {
+                updateBalance()
+            }
+        }
+    }
+
+    private fun checkCurrentBalanceAndUpdate() {
+        val amount = etAmount.text.toString().toLongOrNull()
+
+        if (amount == null || amount <= 0) {
+            Toast.makeText(this, "Jumlah tidak valid", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val balanceRef = db.collection("Balance").document(userId)
+
+        balanceRef.get().addOnSuccessListener { document ->
+            val currentBalance = document.getLong("amount") ?: 0L
+
+            if (currentBalance < amount) {
+                Toast.makeText(this, "Saldo tidak cukup", Toast.LENGTH_SHORT).show()
+            } else {
+                updateBalance()
+            }
+        }.addOnFailureListener {
+            Toast.makeText(this, "Gagal memeriksa saldo", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -33,65 +71,40 @@ class SetBalanceActivity : AppCompatActivity() {
         val amount = etAmount.text.toString().toLongOrNull()
 
         if (amount == null || amount <= 0) {
-            Toast.makeText(this, "Masukkan jumlah yang valid", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Jumlah tidak valid", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // Mendapatkan saldo saat ini dari Firestore
-        db.collection("Balance").document("userBalance")
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val currentBalance = document.getLong("amount") ?: 0
-                    val newBalance = when (operation) {
-                        "add" -> currentBalance + amount
-                        "subtract" -> (currentBalance - amount).coerceAtLeast(0)
-                        else -> currentBalance
-                    }
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val balanceRef = db.collection("Balance").document(userId)
 
-                    // Memperbarui saldo di Firestore
-                    db.collection("Balance").document("userBalance")
-                        .update("amount", newBalance)
-                        .addOnSuccessListener {
-                            // Menyimpan transaksi setelah saldo diperbarui
-                            addTransaction(operation, amount)
+        // Menentukan deskripsi transaksi
+        val transactionDescription = if (operation == "add") "Saku bertambah" else "Saku berkurang"
 
-                            Toast.makeText(this, "Saldo berhasil diperbarui", Toast.LENGTH_SHORT).show()
-                            setResult(Activity.RESULT_OK)
-                            finish() // Kembali ke WalletFragment
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(this, "Gagal memperbarui saldo", Toast.LENGTH_SHORT).show()
-                        }
-                } else {
-                    Toast.makeText(this, "Dokumen saldo tidak ditemukan", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Gagal mengambil saldo", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun addTransaction(operation: String?, amount: Long) {
-        val transactionType = when (operation) {
-            "add" -> "saku bertambah" // Ubah ke "saku bertambah"
-            "subtract" -> "saku berkurang" // Ubah ke "saku berkurang"
-            else -> return // Jika tidak ada operasi yang valid, keluar dari fungsi
+        // Memperbarui saldo
+        if (operation == "add") {
+            balanceRef.update("amount", FieldValue.increment(amount))
+        } else if (operation == "subtract") {
+            balanceRef.update("amount", FieldValue.increment(-amount))
         }
 
-        val transaction = hashMapOf(
-            "type" to transactionType,
+        // Menyimpan riwayat transaksi
+        val transactionData = hashMapOf(
+            "description" to transactionDescription,
             "amount" to amount,
-            "timestamp" to System.currentTimeMillis() // Waktu saat transaksi dilakukan
+            "timestamp" to FieldValue.serverTimestamp()
         )
-
-        // Menyimpan transaksi ke Firestore
-        db.collection("Transactions").add(transaction)
+        db.collection("TransactionHistory").document(userId).collection("transactions")
+            .add(transactionData)
             .addOnSuccessListener {
-                // Transaksi berhasil ditambahkan
+                Toast.makeText(this, "Transaksi berhasil disimpan", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "Gagal menyimpan transaksi: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+
+        // Mengembalikan hasil ke HomeFragment
+        setResult(Activity.RESULT_OK)
+        finish()
     }
 }
